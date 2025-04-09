@@ -26,19 +26,24 @@ useEffect(() => {
     let retries = 0;
 
     const retryAuth = async () => {
-      if (retries >= 3) {
+      if (retries >= 5) {
+        // After 5 retries (2.5 seconds total), assume it's really unauthenticated
         setLocation("/login");
         return;
       }
 
-      await login(); // or whatever triggers session recheck
+      // Force session check again
+      await login(); // or call API to revalidate session
       retries++;
+
+      // Wait 500ms before trying again
       setTimeout(retryAuth, 500);
     };
 
     retryAuth();
   }
-}, [isAuthenticated, isLoading, setLocation, login]);
+}, [isAuthenticated, isLoading, login, setLocation]);
+
 
 
   if (isLoading) {
