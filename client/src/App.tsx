@@ -21,11 +21,25 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading, login } = useAuth();
   const [, setLocation] = useLocation();
 
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      setLocation("/login");
-    }
-  }, [isAuthenticated, isLoading, setLocation]);
+useEffect(() => {
+  if (!isLoading && !isAuthenticated) {
+    let retries = 0;
+
+    const retryAuth = async () => {
+      if (retries >= 3) {
+        setLocation("/login");
+        return;
+      }
+
+      await login(); // or whatever triggers session recheck
+      retries++;
+      setTimeout(retryAuth, 500);
+    };
+
+    retryAuth();
+  }
+}, [isAuthenticated, isLoading, setLocation, login]);
+
 
   if (isLoading) {
     return <LoadingSpinner message="Checking authentication..." />;
