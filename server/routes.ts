@@ -39,14 +39,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       resave: false,
       saveUninitialized: false,
       cookie: {
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      secure: true,          // required for HTTPS (Render is HTTPS)
+      sameSite: 'none',      // required for third-party OAuth to persist cookies
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
       },
-      store: new SessionMemoryStore({
-        checkPeriod: 86400000, // prune expired entries every 24h
-      }),
+    store: new SessionMemoryStore({
+      checkPeriod: 86400000,
     }),
-  );
+  })
+);
+
+  app.use((req, res, next) => {
+    console.log("Session ID:", req.sessionID);
+    next();
+});
+
 
   // Route for initiating Spotify OAuth flow
   app.get("/api/auth/login", (req, res) => {
