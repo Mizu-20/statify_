@@ -87,7 +87,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Use the same redirect URI calculation as in the login route
       // For Spotify OAuth to work, this URL must be EXACTLY the same as registered in Spotify Developer Dashboard
-      const replitUrl = process.env.REPLIT_DOMAINS;
+      const redirectUri = process.env.REDIRECT_URI
       let redirectUri;
 
       // Replacing all the redirectUri logic with this
