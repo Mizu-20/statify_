@@ -84,16 +84,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!code || !clientId || !clientSecret) {
         throw new Error("Missing code or credentials");
       }
-
-      // Use the same redirect URI calculation as in the login route
-      // For Spotify OAuth to work, this URL must be EXACTLY the same as registered in Spotify Developer Dashboard
-      const redirectUri = process.env.REDIRECT_URI
-      let redirectUri;
-
-      // Replacing all the redirectUri logic with this
-      redirectUri = process.env.SPOTIFY_REDIRECT_URI!;
-      console.log("Using static redirect URI:", redirectUri);
-
+      
       // Exchange code for token
       const tokenResponse = await axios.post(
         SPOTIFY_TOKEN_URL,
